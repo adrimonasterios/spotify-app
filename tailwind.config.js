@@ -38,13 +38,9 @@ module.exports = {
           fontSize: theme("fontSize.sm"),
           color: theme("colors.gray.500"),
         },
-        ul: {
-          paddingLeft: "20px",
-        },
         li: {
           fontSize: theme("fontSize.sm"),
           color: theme("colors.gray.500"),
-          listStyleType: "disc",
         },
         button: {
           transitionDuration: "0.25s",
