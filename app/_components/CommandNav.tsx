@@ -1,24 +1,19 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { classNames } from "@/_utils/helpers";
+import { classNames, titleCase } from "@/_utils/helpers";
 import HeroIcon from "@@/common/HeroIcon";
 import Image from "next/image";
-
-type Item = {
-  category: "Albums" | "Artists" | "Tracks";
-  name: string;
-  image: string;
-  metadata?: string;
-};
+import { CommandNavItem } from "@/_utils/types";
 
 type Props = {
-  items: Item[];
+  items: CommandNavItem[];
   open: boolean;
-  onOpen: (value: boolean) => void;
   query: string;
   loading: boolean;
   isHome?: boolean;
+  onOpen: (value: boolean) => void;
   onQueryUpdate: (value: string) => void;
+  onChange: (item: any) => void;
 };
 
 const PlaceholderBase = ({
@@ -46,7 +41,7 @@ const Placeholder = ({
 }: {
   loading: boolean;
   query: string;
-  items: Item[];
+  items: CommandNavItem[];
 }) => {
   if (items.length) return null;
   if (loading) {
@@ -78,11 +73,12 @@ const Placeholder = ({
 const CommandNav = ({
   isHome,
   open,
-  onOpen,
   items,
   query,
   loading,
+  onOpen,
   onQueryUpdate,
+  onChange,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -94,7 +90,7 @@ const CommandNav = ({
     ? items.reduce((groups: any, item: any) => {
         return {
           ...groups,
-          [item.category]: [...((groups[item.category] as any) || []), item],
+          [item.type]: [...((groups[item.type] as any) || []), item],
         };
       }, {})
     : [];
@@ -145,7 +141,7 @@ const CommandNav = ({
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-amg-secondary-400 ring-opacity-5 transition-all">
-              <Combobox onChange={(item: any) => console.log(item)}>
+              <Combobox onChange={(item: any) => onChange}>
                 <div className="relative">
                   <HeroIcon
                     icon="MagnifyingGlassIcon"
@@ -165,10 +161,10 @@ const CommandNav = ({
                   className="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2"
                 >
                   {!!Object.entries(groups).length &&
-                    Object.entries(groups).map(([category, items]) => (
-                      <li key={category}>
+                    Object.entries(groups).map(([type, items]) => (
+                      <li key={type}>
                         <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900">
-                          {category}
+                          {titleCase(type)}
                         </h2>
                         <ul className="mt-2 text-sm text-gray-800">
                           {(items as any).map((item: any, idx: number) => (

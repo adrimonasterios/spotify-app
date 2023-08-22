@@ -11,14 +11,14 @@ This exercise is left fairly open by intention. Treat this as a production level
 
 As a user, I would like to:
 
-- [] Enter text into an input field and be given a list of suggestions of artist, albums, and tracks that match my query
-- [] Be given continuously updated search suggestions as I type without having to wait until I've pressed `enter`
-  - [] As an example, note how Google search provides continuous feedback while typing into their search field
-- [] Be shown my search suggestions in a grid, separated by artist, albums, and tracks. Each grid item should show a relevant photo and text
-  - [] For artists, the image should be the artist photo and the text should be the artist name
-  - [] For albums, the image should be the album artwork and the text should be the album name
-  - [] For tracks, the image should be the album artwork on which the track appears, and the text should be the track name
-- [] Initially be shown at most 5 results per category
+- [x] Enter text into an input field and be given a list of suggestions of artist, albums, and tracks that match my query
+- [x] Be given continuously updated search suggestions as I type without having to wait until I've pressed `enter`
+  - [x] As an example, note how Google search provides continuous feedback while typing into their search field
+- [x] Be shown my search suggestions in a grid, separated by artist, albums, and tracks. Each grid item should show a relevant photo and text
+  - [x] For artists, the image should be the artist photo and the text should be the artist name
+  - [x] For albums, the image should be the album artwork and the text should be the album name
+  - [x] For tracks, the image should be the album artwork on which the track appears, and the text should be the track name
+- [x] Initially be shown at most 5 results per category
 - [] Be able to page through each category of results to be shown additional suggestions, 10 at a time
 - [] See relevant metadata when clicking on a search suggestion in either a sidebar, a modal or a separate page
   - [] For artists, I would like to see the artist photo, the artist name, and a list of albums (both the album artwork and name) released by the artist

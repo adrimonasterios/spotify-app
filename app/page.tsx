@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SpotifyAuthentication } from "./_utils/spotify";
+import { getSpotifyCode } from "./_utils/spotify";
 import CommandNav from "./_components/CommandNav";
 import { useDebounce } from "@/_utils/hooks";
+import { titleCase } from "./_utils/helpers";
+import { CommandNavItem } from "./_utils/types";
+import { useSpotifyAuthentication } from "./_components/providers/SpotifyAuthenticationProvider";
+
+const SUGGESTIONS_PER_CATEGORY = 5;
 
 export default function Home() {
+  const { token, refreshToken, expiresAt } = useSpotifyAuthentication();
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [query, setQuery] = useState<string>("");
+  const [searchParams, setSearchParams] = useState<
+    { refresh_token: string; access_token: string; expires_at: string } | {}
+  >({});
   const { debouncedValue, loading } = useDebounce<string>(query, 500);
-
-  useEffect(() => {
-    (async () => {
-      new SpotifyAuthentication();
-    })();
-  }, []);
 
   useEffect(() => {
     if (debouncedValue) {
@@ -22,42 +25,47 @@ export default function Home() {
     }
   }, [debouncedValue]);
 
-  const handleFetchData = async (debouncedValue: string) => {
-    let searchParams = new URLSearchParams({
-      refresh_token: localStorage.getItem("refresh_token"),
-      access_token: localStorage.getItem("access_token"),
-      expires_at: localStorage.getItem("expires_at"),
-    } as any);
+  const setCategoryItems = (items: any[]) => {
+    return items.slice(0, SUGGESTIONS_PER_CATEGORY).map((item: any) => ({
+      name: item.name,
+      category: `${titleCase(item.type)}s`,
+      image:
+        item.type === "track"
+          ? item.album?.images?.[0]?.url
+          : item?.images?.[0]?.url,
+      metadata: item.type === "artist" ? "" : item.artists[0].name,
+    }));
+  };
 
+  const handleFetchData = async (debouncedValue: string) => {
+    console.log({ token, refreshToken, expiresAt });
     const response = await fetch(
-      `/api/suggestions?query=${debouncedValue}&${searchParams.toString()}`
+      `/api/suggestions?query=${debouncedValue}&${new URLSearchParams({
+        token,
+        refreshToken,
+        expiresAt: expiresAt.toString(),
+      }).toString()}`
     );
     const res = await response.json();
 
+    console.log({ res });
     setSuggestions([
-      ...(res.albums?.items?.slice(0, 5).map((album: any) => ({
-        name: album.name,
-        category: "Albums",
-        image: album?.images?.[0]?.url,
-        metadata: album.artists[0].name,
-      })) || []),
-      ...(res.artists?.items?.slice(0, 5).map((artist: any) => ({
-        name: artist.name,
-        image: artist?.images?.[0]?.url,
-        category: "Artists",
-      })) || []),
-      ...(res.tracks?.items?.slice(0, 5).map((track: any) => ({
-        name: track.name,
-        image: track.album?.images?.[0]?.url,
-        category: "Tracks",
-        metadata: track.artists[0].name,
-      })) || []),
+      ...(setCategoryItems(res.albums.items) || []),
+      ...(setCategoryItems(res.artists.items) || []),
+      ...(setCategoryItems(res.tracks.items) || []),
     ]);
   };
 
   const handleQueryUpdate = (value: string) => {
     setQuery(value);
     if (!value) setSuggestions([]);
+  };
+
+  const handleItemSelect = async (item: CommandNavItem) => {
+    // const itemType:  =
+    //   item.category.toLowerCase() as "albums" | "artists" | "songs";
+    // const entireItem = suggestions[itemType as keyof {}].find((i: CommandNavItem) => i.id === item.id);
+    // setItemDetails(entireItem)
   };
 
   return (
@@ -70,6 +78,7 @@ export default function Home() {
         open={true}
         isHome
         loading={loading}
+        onChange={handleItemSelect}
       />
     </main>
   );

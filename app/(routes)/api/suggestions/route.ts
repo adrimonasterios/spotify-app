@@ -1,5 +1,5 @@
-import { requestSpotify } from "@/_utils/spotify";
 import { NextRequest, NextResponse } from "next/server";
+import { requestSpotify } from "../helpers";
 
 export const GET = async function (request: NextRequest) {
   try {
@@ -7,7 +7,7 @@ export const GET = async function (request: NextRequest) {
     const query = searchParams.get("query");
     const response = await requestSpotify(
       `/search?q=${query}&type=album%2Cartist%2Ctrack`,
-      Object.fromEntries(searchParams)
+      { token: searchParams.get("token") || "" }
     );
     return NextResponse.json(response);
   } catch (error) {
