@@ -1,13 +1,15 @@
+import { requestSpotify } from "@/_utils/spotify";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async function () {
+export const GET = async function (request: NextRequest) {
   try {
-    console.log(process.env.CLIENT_ID);
-    const suggestions = await fetch(
-      `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.CLIENT_ID}&redirect_uri=http://localhost:3000`
+    const searchParams = request.nextUrl.searchParams;
+    const query = searchParams.get("query");
+    const response = await requestSpotify(
+      `/search?q=${query}&type=album%2Cartist%2Ctrack`,
+      Object.fromEntries(searchParams)
     );
-    const html = await suggestions.text();
-    return NextResponse.json({ spotifyLogin: `${html}` });
+    return NextResponse.json(response);
   } catch (error) {
     console.log(error);
   }
