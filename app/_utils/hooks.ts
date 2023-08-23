@@ -26,36 +26,30 @@ export const useDebounce = <T>(
 };
 
 export const useSpotifySearch = () => {
-  const SUGGESTIONS_PER_CATEGORY = 5;
   const { token } = useSpotifyAuthentication();
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<{ [key: string]: any }>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const setCategoryItems = (items: any[]) => {
-    return items.slice(0, SUGGESTIONS_PER_CATEGORY).map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      category: `${titleCase(item.type)}s`,
-      image:
-        item.type === "track"
-          ? item.album?.images?.[0]?.url
-          : item?.images?.[0]?.url,
-      metadata: item.type === "artist" ? "" : item.artists[0].name,
-    }));
-  };
-
-  const fetchData = async (debouncedValue: string) => {
+  const fetchData = async (
+    debouncedValue: string,
+    type: string[],
+    limit: number,
+    offset: number
+  ) => {
     setLoading(true);
-    const response = await fetch(`/api/suggestions?query=${debouncedValue}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `/api/suggestions?query=${debouncedValue}&type=${type.join(
+        "%2C"
+      )}&limit=${limit}&offset=${offset}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token || localStorage.get("access_token")}`,
+        },
+      }
+    );
     const res = await response.json();
-    setSuggestions([
-      ...(setCategoryItems(res.albums.items) || []),
-      ...(setCategoryItems(res.artists.items) || []),
-      ...(setCategoryItems(res.tracks.items) || []),
-    ]);
+
+    setSuggestions(res);
     setLoading(false);
   };
 

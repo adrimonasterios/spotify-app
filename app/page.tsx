@@ -12,115 +12,59 @@ import {
 import { defaultImage, formatDuration, titleCase } from "./_utils/helpers";
 import { CommandNavItem, ItemType, SlideOverItem } from "./_utils/types";
 import { useSpotifyAuthentication } from "./_components/providers/SpotifyAuthenticationProvider";
-import SlideOver from "./_components/SlideOver";
+import SlideOver from "./_components/SlideOver/SlideOver";
 import SimpleTable from "./_components/common/SimpleTable";
 import moment from "moment";
-
-const prepareSlideOverItem = (item: { [key: string]: any }) => {
-  switch (item.type) {
-    case "album": {
-      return {
-        image: item.images?.[0]?.url || defaultImage,
-        name: item.name,
-        subtitle: `Released: ${moment(item.release_date).format(
-          "MMM Do, YYYY"
-        )}`,
-        customContent: (
-          <SimpleTable
-            items={item.tracks.items.map((track: { [key: string]: any }) => ({
-              name: track.name,
-              duration: formatDuration(track.duration_ms),
-            }))}
-            headers={[
-              { field: "name", label: "Name" },
-              { field: "duration", label: "Duration" },
-            ]}
-          />
-        ),
-        contentTitle: "Tracks",
-      };
-    }
-    case "artist": {
-      return {
-        image: item.images?.[0]?.url || defaultImage,
-        name: item.name,
-        subtitle: ``,
-        customContent: (
-          <SimpleTable
-            items={item.albums.map((album: { [key: string]: any }) => ({
-              image: (
-                <img
-                  src={album.images?.[0]?.url || defaultImage}
-                  alt="album-cover"
-                  height={40}
-                  width={40}
-                />
-              ),
-              name: album.name,
-            }))}
-            headers={[
-              { field: "image", label: "Cover" },
-              { field: "name", label: "Name" },
-            ]}
-          />
-        ),
-        contentTitle: "Albums",
-      };
-    }
-    case "track": {
-      return {
-        image: item.album.images?.[0]?.url || defaultImage,
-        name: `Album: ${item.name}`,
-        subtitle: `Released: ${moment(item.album.release_date).format(
-          "MMM Do, YYYY"
-        )}`,
-        customContent: (
-          <div>
-            {item.name}
-            <span className="text-gray-500">
-              {" "}
-              ({formatDuration(item.duration_ms)})
-            </span>
-          </div>
-        ),
-        contentTitle: "Track",
-      };
-    }
-  }
-};
+import { useRouter } from "next/navigation";
+import {
+  prepareSlideOverItem,
+  useSlideOverItem,
+} from "./_components/SlideOver/SlideOver.helpers";
 
 export default function Home() {
-  const { token, refreshToken, expiresAt } = useSpotifyAuthentication();
+  const router = useRouter();
 
   const [query, setQuery] = useState<string>("");
-  const [itemDetails, setItemDetails] = useState<SlideOverItem | null>(null);
+  const [results, setResults] = useState<CommandNavItem[]>([]);
+  const { fetchAlbum, fetchArtist, fetchTrack, itemDetails, clearItemDetails } =
+    useSlideOverItem();
   const { debouncedValue, loading: debounceLoading } = useDebounce<string>(
     query,
     500
   );
-  const { album, fetchAlbum } = useFetchAlbum();
-  const { artist, fetchArtist } = useFetchArtist();
-  const { track, fetchTrack } = useFetchTrack();
+
   const { suggestions, updateSuggestions, fetchData, loading } =
     useSpotifySearch();
 
   useEffect(() => {
     if (debouncedValue) {
-      fetchData(debouncedValue);
+      fetchData(debouncedValue, ["album", "artist", "track"], 5, 0);
     }
   }, [debouncedValue]);
 
   useEffect(() => {
-    setItemDetails(prepareSlideOverItem(album) as SlideOverItem);
-  }, [album]);
+    if (Object.keys(suggestions).length) {
+      setResults([
+        ...(setCategoryItems(suggestions.albums.items) || []),
+        ...(setCategoryItems(suggestions.artists.items) || []),
+        ...(setCategoryItems(suggestions.tracks.items) || []),
+      ]);
+    }
+  }, [suggestions]);
 
-  useEffect(() => {
-    setItemDetails(prepareSlideOverItem(artist) as SlideOverItem);
-  }, [artist]);
-
-  useEffect(() => {
-    setItemDetails(prepareSlideOverItem(track) as SlideOverItem);
-  }, [track]);
+  const setCategoryItems = (items: any[]) => {
+    return items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      category: `${titleCase(item.type)}s`,
+      image:
+        item.type === "track"
+          ? item.album?.images?.[0]?.url
+          : item?.images?.[0]?.url,
+      metadata: item.type === "artist" ? "" : item.artists[0].name,
+    }));
+  };
 
   const handleQueryUpdate = (value: string) => {
     setQuery(value);
@@ -144,27 +88,32 @@ export default function Home() {
   };
 
   const handleSlideClose = () => {
-    setItemDetails(null);
+    clearItemDetails();
+  };
+
+  const handleMore = (type: string) => {
+    router.push(`/results/${type}?query=${debouncedValue}`);
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <CommandNav
-        items={suggestions}
-        onQueryUpdate={handleQueryUpdate}
+        items={results}
         query={query}
-        onOpen={(value) => console.log(value)}
         open={true}
         isHome
         loading={loading || debounceLoading}
+        onQueryUpdate={handleQueryUpdate}
+        onOpen={(value) => console.log(value)}
         onChange={handleItemSelect}
+        onMore={handleMore}
       />
 
       {!!itemDetails && (
         <SlideOver
           open={!!itemDetails}
-          onClose={handleSlideClose}
           item={itemDetails as SlideOverItem}
+          onClose={handleSlideClose}
         />
       )}
     </main>
