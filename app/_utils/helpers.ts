@@ -41,3 +41,13 @@ export const formatDuration = (duration: number) => {
 
   return `${minutes}:${seconds}`;
 };
+
+/** Adds separators in a number, e.g. an amount
+ * @example ```js
+ *   1534009 -> 1,534,009
+ * ```
+ */
+export function formatAmount(n: number | string) {
+  if (!n) return "0";
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

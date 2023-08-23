@@ -16,7 +16,7 @@ module.exports = {
           400: "#fff6e9",
         },
         background: {
-          400: "#f2f4e9",
+          400: "#0d0d0d",
         },
         text: {
           400: "#1b1b1b",

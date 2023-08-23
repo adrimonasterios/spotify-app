@@ -24,7 +24,7 @@ const Button = ({
   return (
     <button
       className={classNames(
-        `inline-flex items-center rounded border border-transparent px-2.5 py-1.5 text-xs font-semibold shadow-sm justify-center focus:outline-none ${
+        `inline-flex items-center rounded border border-transparent px-2.5 py-1.5 text-xs font-semibold justify-center focus:outline-none ${
           buttonVariants[variant || "primary"]
         }`,
         className

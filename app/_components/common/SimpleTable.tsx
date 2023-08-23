@@ -34,7 +34,7 @@ const SimpleTable = ({ items, headers }: Props) => {
                     {headers.map((header, index) => (
                       <td
                         key={`item-header-${index}`}
-                        className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 max-h-full max-w-[164px] text-ellipsis overflow-hidden"
+                        className="whitespace-nowrap text-ellipsis overflow-hidden max-w-[164px] py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 max-h-full "
                       >
                         {item[header.field as keyof { [key: string]: any }]}
                       </td>
