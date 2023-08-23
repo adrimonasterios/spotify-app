@@ -6,9 +6,12 @@ export const GET = async function (request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("query");
+    const type = searchParams.get("type");
+    const limit = searchParams.get("limit");
+    const offset = searchParams.get("offset");
 
     const response = await requestSpotify(
-      `/search?q=${query}&type=album%2Cartist%2Ctrack`,
+      `/search?q=${query}&type=${type}&limit=${limit}&offset=${offset}`,
       request.headers.get("authorization") || ""
     );
     return NextResponse.json(response);

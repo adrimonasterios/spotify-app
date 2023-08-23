@@ -4,6 +4,7 @@ import { classNames, defaultImage, titleCase } from "@/_utils/helpers";
 import HeroIcon from "@@/common/HeroIcon";
 import Image from "next/image";
 import { CommandNavItem } from "@/_utils/types";
+import Button from "./common/Button";
 
 type Props = {
   items: CommandNavItem[];
@@ -14,6 +15,7 @@ type Props = {
   onOpen: (value: boolean) => void;
   onQueryUpdate: (value: string) => void;
   onChange: (item: any) => void;
+  onMore?: (type: string) => void;
 };
 
 const PlaceholderBase = ({
@@ -77,6 +79,7 @@ const CommandNav = ({
   loading,
   onQueryUpdate,
   onChange,
+  onMore,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -150,9 +153,19 @@ const CommandNav = ({
                   {!!Object.entries(groups).length &&
                     Object.entries(groups).map(([type, items]) => (
                       <li key={type}>
-                        <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900">
-                          {titleCase(type)}
-                        </h2>
+                        <div className="flex justify-between  items-center bg-gray-100 px-4 py-2.5">
+                          <h2 className=" text-xs font-semibold text-gray-900">
+                            {titleCase(type)}
+                          </h2>
+                          {!!onMore && (
+                            <Button
+                              text="More"
+                              onClick={() => onMore(type.toLowerCase())}
+                              className=" text-xs font-semibold"
+                              variant="ghost"
+                            />
+                          )}
+                        </div>
                         <ul className="mt-2 text-sm text-gray-800">
                           {(items as any).map((item: any, idx: number) => (
                             <Combobox.Option
@@ -160,8 +173,8 @@ const CommandNav = ({
                               value={item}
                               className={({ active }) =>
                                 classNames(
-                                  "flex cursor-pointer select-none rounded-xl p-3",
-                                  active && "bg-gray-100"
+                                  "flex cursor-pointer select-none p-3",
+                                  active && "bg-gray-50"
                                 )
                               }
                             >
@@ -169,7 +182,7 @@ const CommandNav = ({
                                 <>
                                   <div
                                     className={classNames(
-                                      "flex h-10 w-10 flex-none items-center justify-center rounded-lg",
+                                      "flex h-10 w-10 flex-none items-center justify-center",
                                       item.color
                                     )}
                                   >

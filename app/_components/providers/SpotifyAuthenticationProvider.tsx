@@ -1,6 +1,6 @@
 "use client";
 import { getSpotifyCode } from "@/_utils/spotify";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -20,6 +20,7 @@ export const SpotifyAuthenticationProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const router = useRouter();
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
   const redirectUri = "http://localhost:3000";
 
@@ -46,39 +47,45 @@ export const SpotifyAuthenticationProvider = ({
   useEffect(() => {
     //Set Token with code url param after authenticating with Spotify
     (async () => {
-      if (!!code && !localStorage.getItem("access_token")) {
-        let codeVerifier = localStorage.getItem("code_verifier");
+      const currentToken = localStorage.getItem("access_token");
+      if (!currentToken) {
+        if (code) {
+          let codeVerifier = localStorage.getItem("code_verifier");
 
-        let body = new URLSearchParams({
-          grant_type: "authorization_code",
-          code: code,
-          redirect_uri: redirectUri,
-          client_id: clientId,
-          code_verifier: codeVerifier,
-        } as any);
+          let body = new URLSearchParams({
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: redirectUri,
+            client_id: clientId,
+            code_verifier: codeVerifier,
+          } as any);
 
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: body,
-        });
-        if (!response.ok) {
-          throw new Error("HTTP status " + response.status);
+          const response = await fetch(
+            "https://accounts.spotify.com/api/token",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: body,
+            }
+          );
+          if (!response.ok) {
+            throw new Error("HTTP status " + response.status);
+          }
+          const res = await response.json();
+
+          setAuthenticationValues(res);
+        } else {
+          await getSpotifyCode();
         }
-        const res = await response.json();
-
-        setAuthenticationValues(res);
-      } else if (!code && !token) {
-        await getSpotifyCode();
       }
     })();
   }, [code, token]);
 
   useEffect(() => {
     //Refresh token when it expires
-    if (expiredToken) {
+    if (token && expiredToken) {
       (async () => {
         try {
           let body = new URLSearchParams({
@@ -98,10 +105,16 @@ export const SpotifyAuthenticationProvider = ({
             }
           );
 
-          if (!response.ok) {
-            throw new Error("HTTP status " + response.status);
-          }
           const res = await response.json();
+
+          if (!response.ok) {
+            if (res.error_description === "Refresh token revoked") {
+              localStorage.clear();
+              router.push("/");
+            } else {
+              throw new Error("HTTP status " + response.status);
+            }
+          }
 
           setAuthenticationValues(res);
           return res.access_token;
@@ -131,7 +144,11 @@ export const SpotifyAuthenticationProvider = ({
 
   return (
     <SpotifyAuthenticationContext.Provider
-      value={{ token, refreshToken, expiresAt }}
+      value={{
+        token: token || localStorage?.getItem("access_token") || "",
+        refreshToken,
+        expiresAt,
+      }}
     >
       {children}
     </SpotifyAuthenticationContext.Provider>
