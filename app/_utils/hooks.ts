@@ -1,7 +1,6 @@
 "use client";
-import { useSpotifyAuthentication } from "@/_components/providers/SpotifyAuthenticationProvider";
+import { useSpotifyAuthentication } from "@/_providers/SpotifyAuthenticationProvider";
 import { useEffect, useState } from "react";
-import { titleCase } from "./helpers";
 
 export const useDebounce = <T>(
   value: T,

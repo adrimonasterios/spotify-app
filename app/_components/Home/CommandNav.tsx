@@ -4,7 +4,7 @@ import { classNames, defaultImage, titleCase } from "@/_utils/helpers";
 import HeroIcon from "@@/common/HeroIcon";
 import Image from "next/image";
 import { CommandNavItem } from "@/_utils/types";
-import Button from "./common/Button";
+import Button from "../common/Button";
 
 type Props = {
   items: CommandNavItem[];
@@ -30,7 +30,7 @@ const PlaceholderBase = ({
   return (
     <div className="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14">
       <HeroIcon icon={icon} className="mx-auto h-6 w-6 text-gray-400" />
-      <p className="mt-4 font-semibold text-amg-secondary-400">{title}</p>
+      <p className="mt-4 font-semibold text-secondary-400">{title}</p>
       <p className="mt-2 text-gray-500">{description}</p>
     </div>
   );
@@ -130,7 +130,7 @@ const CommandNav = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-amg-secondary-400 ring-opacity-5 transition-all">
+            <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-secondary-400 ring-opacity-5 transition-all">
               <Combobox onChange={(item: any) => onChange(item)}>
                 <div className="relative">
                   <HeroIcon

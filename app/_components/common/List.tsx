@@ -36,7 +36,6 @@ const List = ({
 
   useEffect(() => {
     if (itemsPerPage) {
-      console.log(totalItems, itemsPerPage, totalItems / itemsPerPage);
       setPages(Math.ceil(totalItems / itemsPerPage));
       setCurrentPage(1);
     }
@@ -57,8 +56,6 @@ const List = ({
           </h1>
           <p className="mt-2 text-sm text-gray-700">{description}</p>
         </div>
-        {/* <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        </div> */}
       </div>
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

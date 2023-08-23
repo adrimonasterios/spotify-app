@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requestSpotify } from "../../helpers";
-import { NextApiRequest } from "next";
 
 export const GET = async (
   request: NextRequest,

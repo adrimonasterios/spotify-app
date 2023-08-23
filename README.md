@@ -10,6 +10,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+The only environment variable needed is NEXT_PUBLIC_SPOTIFY_CLIENT_ID
+
+You can copy the .env.example file and create a new .env.local file with the environment variable
+
 ## Application Details
 
 This application was done with TailwindCSS.

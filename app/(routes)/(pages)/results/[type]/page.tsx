@@ -1,5 +1,5 @@
 "use client";
-import Heading from "@/_components/Heading";
+import Heading from "@/_components/Results/Heading";
 import SlideOver from "@/_components/SlideOver/SlideOver";
 import {
   prepareSlideOverItem,
@@ -7,7 +7,7 @@ import {
 } from "@/_components/SlideOver/SlideOver.helpers";
 import Button from "@/_components/common/Button";
 import List from "@/_components/common/List";
-import { useSpotifyAuthentication } from "@/_components/providers/SpotifyAuthenticationProvider";
+import { useSpotifyAuthentication } from "@/_providers/SpotifyAuthenticationProvider";
 import { formatAmount, formatDuration, titleCase } from "@/_utils/helpers";
 import { useSpotifySearch } from "@/_utils/hooks";
 import { SlideOverItem } from "@/_utils/types";
@@ -95,7 +95,6 @@ const Results = () => {
     useSlideOverItem();
 
   useEffect(() => {
-    console.log("OFFSET");
     (async () => {
       await fetchData(
         query as string,

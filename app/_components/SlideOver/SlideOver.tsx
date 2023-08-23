@@ -1,7 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { HeartIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, PlusIcon } from "@heroicons/react/20/solid";
+import HeroIcon from "../common/HeroIcon";
 import { SlideOverItem } from "@/_utils/types";
 
 type Props = {
@@ -56,7 +55,11 @@ const SlideOver = ({ open, onClose, item }: Props) => {
                       >
                         <span className="absolute -inset-2.5" />
                         <span className="sr-only">Close panel</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                        <HeroIcon
+                          icon="XMarkIcon"
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
                       </button>
                     </div>
                   </Transition.Child>

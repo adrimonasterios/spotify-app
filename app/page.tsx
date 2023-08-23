@@ -1,27 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CommandNav from "./_components/CommandNav";
-import {
-  useDebounce,
-  useFetchAlbum,
-  useFetchArtist,
-  useFetchTrack,
-  useSpotifySearch,
-} from "@/_utils/hooks";
-import { defaultImage, formatDuration, titleCase } from "./_utils/helpers";
+import CommandNav from "./_components/Home/CommandNav";
+import { useDebounce, useSpotifySearch } from "@/_utils/hooks";
+import { titleCase } from "./_utils/helpers";
 import { CommandNavItem, ItemType, SlideOverItem } from "./_utils/types";
-import { useSpotifyAuthentication } from "./_components/providers/SpotifyAuthenticationProvider";
 import SlideOver from "./_components/SlideOver/SlideOver";
-import SimpleTable from "./_components/common/SimpleTable";
-import moment from "moment";
 import { useRouter } from "next/navigation";
-import {
-  prepareSlideOverItem,
-  useSlideOverItem,
-} from "./_components/SlideOver/SlideOver.helpers";
+import { useSlideOverItem } from "./_components/SlideOver/SlideOver.helpers";
 
-export default function Home() {
+const Home = () => {
   const router = useRouter();
 
   const [query, setQuery] = useState<string>("");
@@ -45,14 +33,14 @@ export default function Home() {
   useEffect(() => {
     if (Object.keys(suggestions).length) {
       setResults([
-        ...(setCategoryItems(suggestions.albums.items) || []),
-        ...(setCategoryItems(suggestions.artists.items) || []),
-        ...(setCategoryItems(suggestions.tracks.items) || []),
+        ...(handleCategoryResults(suggestions.albums.items) || []),
+        ...(handleCategoryResults(suggestions.artists.items) || []),
+        ...(handleCategoryResults(suggestions.tracks.items) || []),
       ]);
     }
   }, [suggestions]);
 
-  const setCategoryItems = (items: any[]) => {
+  const handleCategoryResults = (items: any[]) => {
     return items.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -107,7 +95,7 @@ export default function Home() {
           isHome
           loading={loading || debounceLoading}
           onQueryUpdate={handleQueryUpdate}
-          onOpen={(value) => console.log(value)}
+          onOpen={() => null}
           onChange={handleItemSelect}
           onMore={handleMore}
         />
@@ -122,4 +110,6 @@ export default function Home() {
       </div>
     </main>
   );
-}
+};
+
+export default Home;
