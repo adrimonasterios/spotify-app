@@ -7,6 +7,7 @@ import {
   useFetchAlbum,
   useFetchArtist,
   useFetchTrack,
+  useSpotifySearch,
 } from "@/_utils/hooks";
 import { defaultImage, formatDuration, titleCase } from "./_utils/helpers";
 import { CommandNavItem, ItemType, SlideOverItem } from "./_utils/types";
@@ -14,8 +15,6 @@ import { useSpotifyAuthentication } from "./_components/providers/SpotifyAuthent
 import SlideOver from "./_components/SlideOver";
 import SimpleTable from "./_components/common/SimpleTable";
 import moment from "moment";
-
-const SUGGESTIONS_PER_CATEGORY = 5;
 
 const prepareSlideOverItem = (item: { [key: string]: any }) => {
   switch (item.type) {
@@ -92,17 +91,22 @@ const prepareSlideOverItem = (item: { [key: string]: any }) => {
 
 export default function Home() {
   const { token, refreshToken, expiresAt } = useSpotifyAuthentication();
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+
   const [query, setQuery] = useState<string>("");
   const [itemDetails, setItemDetails] = useState<SlideOverItem | null>(null);
-  const { debouncedValue, loading } = useDebounce<string>(query, 500);
+  const { debouncedValue, loading: debounceLoading } = useDebounce<string>(
+    query,
+    500
+  );
   const { album, fetchAlbum } = useFetchAlbum();
   const { artist, fetchArtist } = useFetchArtist();
   const { track, fetchTrack } = useFetchTrack();
+  const { suggestions, updateSuggestions, fetchData, loading } =
+    useSpotifySearch();
 
   useEffect(() => {
     if (debouncedValue) {
-      handleFetchData(debouncedValue);
+      fetchData(debouncedValue);
     }
   }, [debouncedValue]);
 
@@ -118,35 +122,9 @@ export default function Home() {
     setItemDetails(prepareSlideOverItem(track) as SlideOverItem);
   }, [track]);
 
-  const setCategoryItems = (items: any[]) => {
-    return items.slice(0, SUGGESTIONS_PER_CATEGORY).map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      category: `${titleCase(item.type)}s`,
-      image:
-        item.type === "track"
-          ? item.album?.images?.[0]?.url
-          : item?.images?.[0]?.url,
-      metadata: item.type === "artist" ? "" : item.artists[0].name,
-    }));
-  };
-
-  const handleFetchData = async (debouncedValue: string) => {
-    const response = await fetch(`/api/suggestions?query=${debouncedValue}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const res = await response.json();
-    setSuggestions([
-      ...(setCategoryItems(res.albums.items) || []),
-      ...(setCategoryItems(res.artists.items) || []),
-      ...(setCategoryItems(res.tracks.items) || []),
-    ]);
-  };
-
   const handleQueryUpdate = (value: string) => {
     setQuery(value);
-    if (!value) setSuggestions([]);
+    if (!value) updateSuggestions([]);
   };
 
   const handleItemSelect = async (item: CommandNavItem) => {
@@ -178,7 +156,7 @@ export default function Home() {
         onOpen={(value) => console.log(value)}
         open={true}
         isHome
-        loading={loading}
+        loading={loading || debounceLoading}
         onChange={handleItemSelect}
       />
 
