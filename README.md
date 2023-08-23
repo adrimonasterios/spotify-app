@@ -6,29 +6,18 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Application Details
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This application was done with TailwindCSS.
 
-## Learn More
+The idea is having a searchbar at the home screen where one can see quick data about artists, albums or tracks by clicking on any of the results. These results are fetched from the Spotify API using debouncing so we limit the amount of requests we make to the external api. We wait 500 miliseconds after the user has stopped typing to make a request.
 
-To learn more about Next.js, take a look at the following resources:
+If the user wants to see more results for either artists, albums or tracks they can click on the "More" button next to the category title.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To do a new search, the user needs to go back to the home page by clicking on the Home button at the top left of the screen in the results page.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The application works with a Spotify Authentication provider that handles the token and refresh token with react hooks and passes the information through context and stores the same information in the localStorage.
