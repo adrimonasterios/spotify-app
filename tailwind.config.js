@@ -10,17 +10,17 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          400: "#00531b",
+          400: "#1e8177",
         },
         secondary: {
-          400: "#fff6e9",
-        },
-        background: {
           400: "#0d0d0d",
         },
         text: {
           400: "#1b1b1b",
         },
+      },
+      fontSize: {
+        "10xl": "11rem",
       },
     },
   },

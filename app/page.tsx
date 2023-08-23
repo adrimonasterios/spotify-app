@@ -97,25 +97,29 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <CommandNav
-        items={results}
-        query={query}
-        open={true}
-        isHome
-        loading={loading || debounceLoading}
-        onQueryUpdate={handleQueryUpdate}
-        onOpen={(value) => console.log(value)}
-        onChange={handleItemSelect}
-        onMore={handleMore}
-      />
-
-      {!!itemDetails && (
-        <SlideOver
-          open={!!itemDetails}
-          item={itemDetails as SlideOverItem}
-          onClose={handleSlideClose}
+      <div className="z-front w-screen h-screen bg-white absolute top-0 left-0 flex justify-end items-end">
+        <div className="w-[1000px] h-[1000px] absolute -top-72 -left-72 bg-primary-400 rounded-full" />
+        <p className="z-front text-10xl text-secondary-400 font-bold">amg.</p>
+        <CommandNav
+          items={results}
+          query={query}
+          open={true}
+          isHome
+          loading={loading || debounceLoading}
+          onQueryUpdate={handleQueryUpdate}
+          onOpen={(value) => console.log(value)}
+          onChange={handleItemSelect}
+          onMore={handleMore}
         />
-      )}
+
+        {!!itemDetails && (
+          <SlideOver
+            open={!!itemDetails}
+            item={itemDetails as SlideOverItem}
+            onClose={handleSlideClose}
+          />
+        )}
+      </div>
     </main>
   );
 }

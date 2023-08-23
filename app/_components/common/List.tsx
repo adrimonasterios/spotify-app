@@ -49,7 +49,7 @@ const List = ({
   };
 
   return (
-    <div className="py-10 ring-1 ring-slate-900/10 rounded-lg px-4 sm:px-6 lg:px-8 w-[680px]">
+    <div className="py-10 ring-1 ring-slate-900/10 rounded-lg px-4 sm:px-6 lg:px-8 w-full lg:w-[680px]">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900">

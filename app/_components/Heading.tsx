@@ -23,8 +23,8 @@ const Heading = ({ children, subtitles }: HeadingProps & PropsWithChildren) => {
 
   return (
     <div>
-      <div className="bg-background-400 shadow-sm">
-        <div className="flex flex-wrap items-center gap-6 mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 bg-background-400">
+      <div className="bg-secondary-400 shadow-sm">
+        <div className="flex flex-wrap items-center gap-6 mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 bg-secondary-400">
           <span className="flex items-center">
             <HeroIcon
               icon="HomeIcon"
@@ -62,7 +62,9 @@ const Heading = ({ children, subtitles }: HeadingProps & PropsWithChildren) => {
           )}
         </div>
       </div>
-      <div className="flex justify-center w-full py-10 px-20">{children}</div>
+      <div className="flex justify-center w-full py-10 lg:px-20 px-8">
+        {children}
+      </div>
     </div>
   );
 };
