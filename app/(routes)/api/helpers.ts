@@ -1,11 +1,8 @@
-export const requestSpotify = async (
-  url: string,
-  { token }: { [k: string]: string }
-) => {
+export const requestSpotify = async (url: string, authorization: string) => {
   try {
     const response = await fetch(`https://api.spotify.com/v1${url}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: authorization,
       },
     });
 
