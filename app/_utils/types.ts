@@ -1,4 +1,4 @@
-export type ItemType = "albums" | "artists" | "songs";
+export type ItemType = "album" | "artist" | "track";
 
 export type CommandNavItem = {
   type: ItemType;
@@ -6,4 +6,12 @@ export type CommandNavItem = {
   image: string;
   metadata?: string;
   id: string;
+};
+
+export type SlideOverItem = {
+  image: string;
+  name: string;
+  subtitle: string;
+  customContent: JSX.Element;
+  contentTitle: string;
 };

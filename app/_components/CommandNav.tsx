@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { classNames, titleCase } from "@/_utils/helpers";
+import { classNames, defaultImage, titleCase } from "@/_utils/helpers";
 import HeroIcon from "@@/common/HeroIcon";
 import Image from "next/image";
 import { CommandNavItem } from "@/_utils/types";
@@ -72,11 +72,9 @@ const Placeholder = ({
 
 const CommandNav = ({
   isHome,
-  open,
   items,
   query,
   loading,
-  onOpen,
   onQueryUpdate,
   onChange,
 }: Props) => {
@@ -90,7 +88,7 @@ const CommandNav = ({
     ? items.reduce((groups: any, item: any) => {
         return {
           ...groups,
-          [item.type]: [...((groups[item.type] as any) || []), item],
+          [item.category]: [...((groups[item.category] as any) || []), item],
         };
       }, {})
     : [];
@@ -99,20 +97,9 @@ const CommandNav = ({
     onQueryUpdate(event.target.value);
   };
 
-  const handlePressEnter = (e: React.KeyboardEvent) => {
-    // if (query && e.key === "Enter") {
-    //   navigate(filteredItems[0].url);
-    // }
-  };
-
   return (
-    <Transition.Root
-      show={open}
-      as={Fragment}
-      afterLeave={() => onQueryUpdate("")}
-      appear
-    >
-      <Dialog as="div" className="relative z-front" onClose={onOpen}>
+    <Transition.Root show={true} as={Fragment} appear>
+      <Dialog as="div" className="relative z-front" onClose={() => null}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -141,7 +128,7 @@ const CommandNav = ({
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-amg-secondary-400 ring-opacity-5 transition-all">
-              <Combobox onChange={(item: any) => onChange}>
+              <Combobox onChange={(item: any) => onChange(item)}>
                 <div className="relative">
                   <HeroIcon
                     icon="MagnifyingGlassIcon"
@@ -151,7 +138,7 @@ const CommandNav = ({
                     className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={handleSeach}
-                    onKeyDown={handlePressEnter}
+                    value={query || ""}
                     ref={inputRef}
                   />
                 </div>
@@ -187,7 +174,7 @@ const CommandNav = ({
                                     )}
                                   >
                                     <Image
-                                      src={item.image}
+                                      src={item.image || defaultImage}
                                       alt="item image"
                                       width={24}
                                       height={24}
