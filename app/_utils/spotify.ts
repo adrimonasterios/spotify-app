@@ -1,6 +1,4 @@
 "use client";
-import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const redirectUri = "http://localhost:3000";

@@ -39,18 +39,12 @@ export const SpotifyAuthenticationProvider = ({
         Math.floor(new Date().getTime() / 1000) <=
       0
     ) {
-      console.log(
-        "EXPIRED",
-        Math.max(expiresAt, Number(localStorage.getItem("expires_at"))),
-        Math.floor(new Date().getTime() / 1000),
-        Math.max(expiresAt, Number(localStorage.getItem("expires_at"))) -
-          Math.floor(new Date().getTime() / 1000)
-      );
       setExpiredToken(true);
     }
   }, []);
 
   useEffect(() => {
+    //Set Token with code url param after authenticating with Spotify
     (async () => {
       if (!!code && !localStorage.getItem("access_token")) {
         let codeVerifier = localStorage.getItem("code_verifier");
@@ -83,6 +77,7 @@ export const SpotifyAuthenticationProvider = ({
   }, [code, token]);
 
   useEffect(() => {
+    //Refresh token when it expires
     if (expiredToken) {
       (async () => {
         try {
